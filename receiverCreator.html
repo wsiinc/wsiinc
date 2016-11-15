@@ -1,0 +1,520 @@
+<!--
+Copyright (C) 2014 Google Inc. All Rights Reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<!DOCTYPE html>
+<html>
+<head>
+<style type="text/css">
+body {
+	overflow: hidden;
+}
+
+div {
+	height: 720PX;
+	width: 1280PX;
+	text-align: center;
+	border: 0px solid silver;
+	display: table-cell;
+	vertical-align: middle;
+	color: #000000;
+	background-color: #ffffff;
+	    font-weight:bold;
+	    font-family:Verdana, Geneva, sans-serif;
+	    font-size:40px;
+}
+
+</style>
+<title>TV Billboards</title>
+</head>
+<body bgcolor="#ffffff">
+
+	<div id="tbl">
+		
+		<table id="tbl12" align="center" >
+			<tbody>
+				<tr>
+					<td style="width: 20px;"></td>
+
+					<td align="center" id='txt' height="720">
+						<font color="#0000ff"><font size="7"><font face="bold">
+						TV Billboard Cast<br><br></font></font></font>
+						<font color="#000000"><font size="6">
+						Chromecast connected. Press OK on the Android device and select slide</font></font></td>
+
+					<td style="width: 20px;"></td>
+				</tr>
+			</tbody>
+		</table>
+
+		<table id="tbl1" align="center" >
+			<tbody>
+
+				<tr>
+					<td style="width: 20px;"></td>
+					
+					<td><img
+						alt="TV and phone must be on same WiFi net to display image"
+						src="https://googledrive.com/host/0B8MbhdN88MmiZS0xVnQzWUowZU0/pix.jpg"
+						id="image" width="550"/></td>
+					
+					<td style="width: 10px;"><td>
+
+					<td align="left" id='message'></font></td>
+
+					<td style="width: 20px;"></td>
+				</tr>
+			</tbody>
+		</table>
+
+
+	</div>
+
+	<script type="text/javascript"
+		src="//www.gstatic.com/cast/sdk/libs/receiver/2.0.0/cast_receiver.js"></script>
+	<script type="text/javascript">
+		window.onload = function() {
+			cast.receiver.logger.setLevelValue(0);
+			window.castReceiverManager = cast.receiver.CastReceiverManager
+					.getInstance();
+			console.log('Starting Receiver Manager');
+
+			// handler for the 'ready' event
+			castReceiverManager.onReady = function(event) {
+				console.log('Received Ready event: '
+						+ JSON.stringify(event.data));
+				window.castReceiverManager
+						.setApplicationState("Application status is ready...");
+			};
+
+			// handler for 'senderconnected' event
+			castReceiverManager.onSenderConnected = function(event) {
+				console.log('Received Sender Connected event: ' + event.data);
+				console
+						.log(window.castReceiverManager.getSender(event.data).userAgent);
+			};
+
+			// handler for 'senderdisconnected' event
+			castReceiverManager.onSenderDisconnected = function(event) {
+				console
+						.log('Received Sender Disconnected event: '
+								+ event.data);
+				if (window.castReceiverManager.getSenders().length == 0) {
+					window.close();
+				}
+			};
+
+			// handler for 'systemvolumechanged' event
+			castReceiverManager.onSystemVolumeChanged = function(event) {
+				console.log('Received System Volume Changed event: '
+						+ event.data['level'] + ' ' + event.data['muted']);
+			};
+
+			// create a CastMessageBus to handle messages for a custom namespace
+			window.messageBus = window.castReceiverManager
+					.getCastMessageBus('urn:x-cast:com.intoronto.bcreator');
+
+			// handler for the CastMessageBus message event
+			window.messageBus.onMessage = function(event) {
+				console.log('Message [' + event.senderId + ']: ' + event.data);
+				// display the message from the sender
+				displayText(event.data);
+				// inform all senders on the CastMessageBus of the incoming message event
+				// sender message listener will be invoked
+				window.messageBus.send(event.senderId, event.data);
+			}
+
+			// initialize the CastReceiverManager with an application status message
+			window.castReceiverManager.start({
+				statusText : "Application is starting"
+			});
+			console.log('Receiver Manager started');
+		};
+
+		// utility function to display the text message in the input field
+
+		var baseip1 = "http://192.168.10.106";
+		function displayText(text) {
+			console.log(text);
+
+			if (text.indexOf("Chgb5432") != -1) {
+				baseip1 = text.substring(8, text.length);
+				console.log("baseip1=" + baseip1);
+			}
+			if (text.indexOf("YAhn23ed") != -1) {
+				loopsy(baseip1);
+			}
+
+			window.castReceiverManager.setApplicationState(text);
+		};
+
+		///////// looping for messages
+
+		function loopsy(baseip) {
+
+			var xmlHttp1 = null;
+
+			xmlHttp1 = new XMLHttpRequest();
+
+			xmlHttp1.open("GET", baseip + ":8765/TVBillboardCreator/default.html",
+					false);
+
+			try { // try again
+
+				xmlHttp1.send(null);
+
+				if (xmlHttp1.responseText.indexOf("INTERNAL") == -1) {
+
+					//xmlHttp1.open("GET", baseip + ":8765/TVBillboardCreator/default.html", false);
+
+					try {
+						//xmlHttp1.send(null);
+
+						if (xmlHttp1.responseText.indexOf("textonlyYAhn23ed") != -1) {
+
+// ///////////////////////////// present slide with text only
+
+							var recordno = 1;
+							recordno = xmlHttp1.responseText.replace(
+									"textonlyYAhn23ed", "");
+
+							var xmlHttp1 = null;
+
+							xmlHttp1 = new XMLHttpRequest();
+							xmlHttp1.open("GET", baseip + ":8765", false);
+							try {
+								xmlHttp1.send(null);
+							} catch (err) {
+
+								document.getElementById("message").innerHTML = "reset";
+							}
+
+							if (xmlHttp1.responseText.indexOf("INTERNAL") != -1) {
+
+								document.getElementById("image").src = 																	"https://googledrive.com/host/0B8MbhdN88MmiZS0xVnQzWUowZU0/pix.jpg";
+
+								xmlHttp1.open("GET", baseip
+										+ ":8765/TVBillboardCreator/" + recordno
+										+ "/note.html", false);
+								try {
+									xmlHttp1.send(null);
+								} catch (err) {
+
+									document.getElementById("txt").innerHTML = "reset";
+								}
+
+								if (xmlHttp1.responseText
+										.indexOf("04, file not found") == -1) {
+
+									document.getElementById("message").innerHTML = "";
+
+									document.getElementById("txt").height = "720";
+
+									document.getElementById("txt").innerHTML = xmlHttp1.responseText
+											.substring(
+													7,
+													xmlHttp1.responseText.length);
+									document.getElementById("tbl").style.backgroundColor = "#"
+											+ xmlHttp1.responseText.substring(
+													0, 6);
+									document.getElementById("txt").style.backgroundColor = "#"
+											+ xmlHttp1.responseText.substring(
+													0, 6);
+								} else {
+									document.getElementById("tbl").style.backgroundColor = "#ffffff";
+									document.getElementById("txt").style.backgroundColor = "#ffffff";
+								}
+
+								// ////////// end present slide with text
+								// only
+							}
+						} else if (xmlHttp1.responseText
+								.indexOf("pictextportraitYAhn23ed") != -1) {
+
+// //////// present slide with pic and text portrait
+
+							var recordno = 1;
+							recordno = xmlHttp1.responseText.replace(
+									"pictextportraitYAhn23ed", "");
+
+							var xmlHttp1 = null;
+
+							xmlHttp1 = new XMLHttpRequest();
+							xmlHttp1.open("GET", baseip + ":8765", false);
+							try {
+								xmlHttp1.send(null);
+							} catch (err) {
+
+								document.getElementById("message").innerHTML = "reset";
+							}
+
+							if (xmlHttp1.responseText.indexOf("INTERNAL") != -1) {
+
+								document.getElementById("image").src = baseip
+										+ ":8765/TVBillboardCreator/" + recordno
+										+ "/pic.jpg.jpg";
+								xmlHttp1.open("GET", baseip
+										+ ":8765/TVBillboardCreator/" + recordno
+										+ "/note.html", false);
+								try {
+									xmlHttp1.send(null);
+								} catch (err) {
+									document.getElementById("message").innerHTML = "reset";
+								}
+
+								if (xmlHttp1.responseText
+										.indexOf("04, file not found") == -1) {
+									
+									document.getElementById("txt").height = "0";
+									document.getElementById("txt").innerHTML = "";
+
+									document.getElementById("message").innerHTML = xmlHttp1.responseText
+											.substring(
+													7,
+													xmlHttp1.responseText.length);
+									document.getElementById("tbl").style.backgroundColor = "#"
+											+ xmlHttp1.responseText.substring(
+													0, 6);
+									document.getElementById("message").style.backgroundColor = "#"
+											+ xmlHttp1.responseText.substring(
+													0, 6);
+								} else {
+									document.getElementById("tbl").style.backgroundColor = "#ffffff";
+									document.getElementById("message").style.backgroundColor = "#ffffff";
+								}
+
+								// ////////// end present slide with pic and
+								// text
+								// portrait
+							}
+						} else if (xmlHttp1.responseText
+								.indexOf("picportraitYAhn23ed") != -1) {
+// ///////////// present slide with pic only portrait
+
+							var recordno = 1;
+							recordno = xmlHttp1.responseText.replace(
+									"picportraitYAhn23ed", "");
+
+							var xmlHttp1 = null;
+
+							xmlHttp1 = new XMLHttpRequest();
+							xmlHttp1.open("GET", baseip + ":8765", false);
+							try {
+								xmlHttp1.send(null);
+							} catch (err) {
+
+								document.getElementById("message").innerHTML = "reset";
+							}
+
+							if (xmlHttp1.responseText.indexOf("INTERNAL") != -1) {
+
+								document.getElementById("image").src = baseip
+										+ ":8765/TVBillboardCreator/" + recordno
+										+ "/pic.jpg.jpg";
+								xmlHttp1.open("GET", baseip
+										+ ":8765/TVBillboardCreator/" + recordno
+										+ "/note.html", false);
+								try {
+									xmlHttp1.send(null);
+								} catch (err) {
+
+									document.getElementById("message").innerHTML = "reset";
+								}
+
+								if (xmlHttp1.responseText
+										.indexOf("04, file not found") == -1) {
+
+									document.getElementById("txt").height = "0";
+									document.getElementById("txt").innerHTML = "";
+									document.getElementById("message").innerHTML = "";
+
+
+									document.getElementById("tbl").style.backgroundColor = "#"
+											+ xmlHttp1.responseText.substring(
+													0, 6);
+									document.getElementById("message").style.backgroundColor = "#"
+											+ xmlHttp1.responseText.substring(
+													0, 6);
+								} else {
+									document.getElementById("tbl").style.backgroundColor = "#ffffff";
+									document.getElementById("message").style.backgroundColor = "#ffffff";
+								}
+							}
+							// ////////// end present slide with pic only
+							// portrait
+						} else if (xmlHttp1.responseText
+								.indexOf("piclandYAhn23ed") != -1) {
+// ///////////// present slide with pic only landscape
+
+							var recordno = 1;
+							recordno = xmlHttp1.responseText.replace(
+									"piclandYAhn23ed", "");
+							var xmlHttp1 = null;
+
+							xmlHttp1 = new XMLHttpRequest();
+							xmlHttp1.open("GET", baseip + ":8765", false);
+							try {
+								xmlHttp1.send(null);
+							} catch (err) {
+
+							}
+
+							if (xmlHttp1.responseText.indexOf("INTERNAL") != -1) {
+
+								document.getElementById("image").src = baseip
+										+ ":8765/TVBillboardCreator/" + recordno
+										+ "/pic.jpg.jpg";
+								xmlHttp1.open("GET", baseip
+										+ ":8765/TVBillboardCreator/" + recordno
+										+ "/note.html", false);
+								try {
+									xmlHttp1.send(null);
+								} catch (err) {
+
+								}
+
+								if (xmlHttp1.responseText
+										.indexOf("04, file not found") == -1) {
+
+									document.getElementById("txt").height = "0";
+									document.getElementById("txt").innerHTML = "";
+									document.getElementById("message").innerHTML = "";
+
+									document.getElementById("tbl").style.backgroundColor = "#"
+											+ xmlHttp1.responseText.substring(
+													0, 6);
+									document.getElementById("message").style.backgroundColor = "#"
+											+ xmlHttp1.responseText.substring(
+													0, 6);
+								} else {
+									document.getElementById("message").style.backgroundColor = "#ffffff";
+									document.getElementById("tbl").style.backgroundColor = "#ffffff";
+								}
+
+							}
+							// ////////// end present slide with pic only
+							// landscape
+						} else if (xmlHttp1.responseText
+								.indexOf("pictextlandYAhn23ed") != -1) {
+
+// ///////////// present slide with pic and text landscape
+
+							var recordno = 1;
+							recordno = xmlHttp1.responseText.replace(
+									"pictextlandYAhn23ed", "");
+
+							var xmlHttp1 = null;
+
+							xmlHttp1 = new XMLHttpRequest();
+							xmlHttp1.open("GET", baseip + ":8765", false);
+							try {
+								xmlHttp1.send(null);
+							} catch (err) {
+
+							}
+
+							if (xmlHttp1.responseText.indexOf("INTERNAL") != -1) {
+
+								document.getElementById("image").src = baseip
+										+ ":8765/TVBillboardCreator/" + recordno
+										+ "/pic.jpg.jpg";
+
+								xmlHttp1.open("GET", baseip
+										+ ":8765/TVBillboardCreator/" + recordno
+										+ "/note.html", false);
+								try {
+									xmlHttp1.send(null);
+								} catch (err) {
+
+								}
+
+								if (xmlHttp1.responseText
+										.indexOf("04, file not found") == -1) {
+
+									document.getElementById("txt").height = "0";
+									document.getElementById("txt").innerHTML = "";
+
+									document.getElementById("message").innerHTML = xmlHttp1.responseText
+											.substring(
+													7,
+													xmlHttp1.responseText.length);
+									document.getElementById("tbl").style.backgroundColor = "#"
+											+ xmlHttp1.responseText.substring(
+													0, 6);
+									document.getElementById("message").style.backgroundColor = "#"
+											+ xmlHttp1.responseText.substring(
+													0, 6);
+
+								} else {
+									document.getElementById("tbl").style.backgroundColor = "#ffffff";
+									document.getElementById("message").style.backgroundColor = "#ffffff";
+								}
+							}
+							// ////////// end present slide with pic and
+							// text
+							// landscape
+						}
+
+						else if (xmlHttp1.responseText
+								.indexOf("leaveonYAhn23ed") != -1) {
+
+							// /////////////// leave billboard on tv
+
+							document.getElementById("roomCode1").innerHTML = "Please enter the connection number to re-connect";
+							//clearInterval(inter);
+						}
+
+						else if (xmlHttp1.responseText
+								.indexOf("exithubYAhn23ed") != -1) {
+
+							// /////////////// exit to smart hub
+
+							var widgetAPI = new Common.API.Widget();
+							widgetAPI.sendReturnEvent();
+							curWidget.setPreference("return", "true");
+						}
+
+						else if (xmlHttp1.responseText
+								.indexOf("exittvYAhn23ed") != -1) {
+
+							// /////////////// exit to tv
+
+							var widgetAPI1 = new Common.API.Widget();
+							widgetAPI1.sendExitEvent();
+							curWidget.setPreference("exit", "true");
+						}
+
+						else {
+
+							//////////////  start page
+
+							document.getElementById("message").innerHTML = "Press OK1 on the Android device and select slide";
+						}
+
+					} catch (err) {
+						document.getElementById("message").innerHTML = "Reset";
+					}
+				}
+			} catch (err) {
+
+				document.getElementById("message").innerHTML = "Disconnected - please try again";
+
+				//clearInterval(inter);
+			}
+		}
+		// ////////////////////////// end of the endless loop
+	</script>
+</body>
+</html>
+View all
